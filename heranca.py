@@ -44,8 +44,7 @@ parser.add_argument('-i', '--input_metadata_file', nargs='?', type=str,
                     default = 'demo/vcf_metadata.txt')
 parser.add_argument('-fa', '--fasta_file', nargs='?', type=str, 
                     default = 'demo/s288c_chr3.fa')
-parser.add_argument('-o',"--output_path", nargs='?', type=str,
-                    default = '.')
+parser.add_argument('-o',"--output_path")
 #parameters
 parser.add_argument('-no_indel', '--no_evaluate_indel', type=bool, default = True)
 parser.add_argument('-w', '--window', nargs='?', type=int, default = 7)
@@ -61,7 +60,10 @@ ancestor_lookup = {}
 strain_variant_catalog = {}
 metadata_dict = {}
 
-output_path = pathlib.Path(args.output_path)
+if args.output_path:
+    output_path = pathlib.Path(args.output_path)
+else:
+    output_path = ''
 
 def load_genome():
     global genome_sequence_dict
@@ -306,7 +308,7 @@ def load_metadata():
     global ancestor_lookup, metadata_dict
     
     input_metadata_file = open(args.input_metadata_file)
-    outfile_uid = open(args.output_path + '_uid.tab','w')
+    outfile_uid = open(output_path + '_heranca_uid.log','w')
     
     for line in input_metadata_file:
         if line[0] != '#':
