@@ -19,6 +19,7 @@ ver 0.5 - public (statement sequence)
     _x_ added demo files
     _x_ corrected output
     _x_ fasta file format handling
+    _x_ 
 
 @author: pspealman
 
@@ -33,10 +34,8 @@ S5	demo/S5.vcf	Anc
 S6	demo/S6.vcf	Anc, S5
 
 """
-
+import os
 import argparse
-import pathlib
-
 parser = argparse.ArgumentParser()
 
 #io
@@ -45,6 +44,7 @@ parser.add_argument('-i', '--input_metadata_file', nargs='?', type=str,
 parser.add_argument('-fa', '--fasta_file', nargs='?', type=str, 
                     default = 'demo/s288c_chr3.fa')
 parser.add_argument('-o',"--output_path")
+
 #parameters
 parser.add_argument('-no_indel', '--no_evaluate_indel', type=bool, default = True)
 parser.add_argument('-w', '--window', nargs='?', type=int, default = 7)
@@ -61,9 +61,9 @@ strain_variant_catalog = {}
 metadata_dict = {}
 
 if args.output_path:
-    output_path = pathlib.Path(args.output_path)
+    output_path = args.output_path
 else:
-    output_path = ''
+    output_path = os.getcwd()
 
 def load_genome():
     global genome_sequence_dict
