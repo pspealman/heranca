@@ -1,14 +1,13 @@
 # heranca
-A small script for reducing false positive variant calls using lineage information
+A small script for reducing false positive variant calls using lineage information. v0.5
 
 ### Overview
   False positive variant calls can add extra labor to the task of making sense of a genotype. This tool uses lineage information supplied from the user to identify instances where a variant breaks from the infinite site assumption (ISA) and is more likely a false positive than a real variant. By defualt this is if it occurs in three or more unrelated strains.
   ![simple_lineages](https://user-images.githubusercontent.com/32845376/184647554-1ed94eeb-20b7-4978-a88a-99e67f8aa2ac.png)
 
-
   Using the figure above a candidate variant that shows up in S3, S4, and S6 is unlikely to be real as these strains lack a common ancestor that also has the same variant. Similarly, if the same variant was found in the ancestor (Anc) then it would be reasonable to assume it was likely to be real. 
 
-   Additionally, heranca, will flag variants that continue a homopolymer run (default of 5 nucelotides of the same base over a window with a default size of 7). 
+  Additionally, heranca, will flag variants that continue a homopolymer run (default of 5 nucelotides of the same base over a window with a default size of 7). 
 
 ### Lineage Metadata file format
 ```
