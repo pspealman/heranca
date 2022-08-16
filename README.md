@@ -56,6 +56,10 @@ S6	demo/S6.vcf	Anc, S5
   '-m', '--max_isa'
   default = 3
   ```
+  Evaluate Indel - Indels, unlike SNPs have an additional complication where the alternative sequence is more easily described as a continuation of the reference sequence, such that the indel is equivalent to the refernce with no modifier. Candidates with 'ALT' sequences equal to the 'REF' sequence will be marked 'QH_Filter_low_quality_insertion' or 'QH_Filter_low_quality_deletion'.
+  ```
+  '-no_indel', '--no_evaluate_indel', type=bool, default = False)
+  ```
 ### Output:
 
 Output will be a modified VCF file inluding all variants present in the original, but with those candidates that failed the polynucelotide or ISA criteria flagged as described above. 
