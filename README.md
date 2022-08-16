@@ -36,7 +36,7 @@ S6	demo/S6.vcf	Anc, S5
   Output 
   ```
   '-o',"--output_path"
-  default = 'heranca_'
+  default = current working directory
   ```
   
   #### Parameters
