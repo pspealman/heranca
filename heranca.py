@@ -14,6 +14,11 @@ ver 0.3 - public (closed suspicion)
     
 ver 0.4 - public (abstract owl)
     _x_ added indel handling
+    
+ver 0.5 - public (statement sequence)
+    _x_ added demo files
+    _x_ corrected output
+    _x_ fasta file format handling
 
 @author: pspealman
 
@@ -30,16 +35,17 @@ S6	demo/S6.vcf	Anc, S5
 """
 
 import argparse
+import pathlib
 
 parser = argparse.ArgumentParser()
 
 #io
 parser.add_argument('-i', '--input_metadata_file', nargs='?', type=str, 
-                    default = 'C:/Gresham/Project_Carolino_new/combine_vcf_metadata_indels.txt')
+                    default = 'demo/vcf_metadata.txt')
 parser.add_argument('-fa', '--fasta_file', nargs='?', type=str, 
-                    default = 'C:/Gresham/genomes/NCBI_R64/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa')
+                    default = 'demo/s288c_chr3.fa')
 parser.add_argument('-o',"--output_path", nargs='?', type=str,
-                    default = 'heranca_')
+                    default = '.')
 #parameters
 parser.add_argument('-no_indel', '--no_evaluate_indel', type=bool, default = True)
 parser.add_argument('-w', '--window', nargs='?', type=int, default = 7)
@@ -54,6 +60,8 @@ locus_to_vc = {}
 ancestor_lookup = {}
 strain_variant_catalog = {}
 metadata_dict = {}
+
+output_path = pathlib.Path(args.output_path)
 
 def load_genome():
     global genome_sequence_dict
@@ -73,6 +81,7 @@ def load_genome():
             
             if not abrir:    
                 print(line)
+                line=line.strip()
                 abrir = True
                 name = line.split('>')[1].split(' ')[0]
                 seq = ''           
@@ -138,12 +147,12 @@ def get_strain_count(strain, variant, metadata_dict):
 
 def parse_vcf(strain, filename, outfile_uid, metadata_dict):
     global universal_vc, locus_to_vc, genome_sequence_dict, strain_variant_catalog
-    
-    
-                
+                    
     infile = open(filename)
-    print(filename)
-    edited_filename = ('{}_heranca.vcf').format(filename.split('.vcf')[0])
+    
+    file_stem = pathlib.Path(filename).stem
+        
+    edited_filename = ('{}{}_heranca.vcf').format(output_path, file_stem)
     edited_file = open(edited_filename, 'w')
     
     for line in infile:
