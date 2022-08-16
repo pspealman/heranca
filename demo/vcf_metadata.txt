@@ -1,0 +1,7 @@
+Anc	demo/Anc.vcf	Anc
+S1	demo/S1.vcf	Anc
+S2	demo/S2.vcf	Anc
+S3	demo/S3.vcf	Anc
+S4	demo/S4.vcf	Anc
+S5	demo/S5.vcf	Anc
+S6	demo/S6.vcf	Anc, S5
