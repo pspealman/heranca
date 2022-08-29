@@ -17,6 +17,7 @@ A small script for reducing false positive variant calls using lineage informati
   A modified main.nf file (and example config file) of Mohammed Khalfan's GATK4 nextflow script ([original here](https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/)) have been added to the demo folder. These have been modified for use on haploid yeast strains with two important changes: 
 * gatk HaplotypeCaller --sample-ploidy 1
 * gatk VariantFiltration -filter-name "MQ_filter" -filter "MQ < 30.0"
+  
   Modified config files can be defined using the ```-C``` argument
 ```
 nextflow -C DGY1657_A_40_nextflow.config run main.nf
