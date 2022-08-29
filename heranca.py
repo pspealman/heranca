@@ -26,6 +26,8 @@ ver 0.6 - public (journal lease)
     _x_ window handling for near calls
         _x_ including pairwise2 from biopython
         _x_ new dependency: pip install biopython
+    
+    0.6.1 _x_ added UI text
 
 @author: pspealman
 
@@ -102,7 +104,7 @@ def load_genome():
                 abrir = False
             
             if not abrir:    
-                print(line)
+                #print(line)
                 line=line.strip()
                 abrir = True
                 name = line.split('>')[1].split(' ')[0]
@@ -225,7 +227,7 @@ def eval_minimum_relative_likelihood(values):
 
 def parse_vcf(strain, filename, outfile_uid, metadata_dict):
     global universal_vc, locus_to_vc, genome_sequence_dict, strain_variant_catalog
-                       
+                           
     log_dict = {}
     
     infile = open(filename)
@@ -234,10 +236,12 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
         
     edited_filename = ('{}{}_heranca.vcf').format(output_path, file_stem)
     edited_file = open(edited_filename, 'w')
+    print('Edited vcf file saved to: ', edited_filename)
     
     if args.export_annotation:
         anno_filename = ('{}{}_heranca.anno.tab').format(output_path, file_stem)
         anno_file = open(anno_filename, 'w')
+        print('Annotation summary saved to: ', anno_filename)
             
     for line in infile:
     #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	HG7CVAFXX_mini02_40
@@ -287,7 +291,7 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
             if filter_value not in log_dict:
                 log_dict[filter_value] = 0
             log_dict[filter_value] += 1
-                        
+                                    
             line_new = original_line.replace("PASS", filter_value)
             edited_file.write(line_new)
             
@@ -316,6 +320,7 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
         
     if args.enable_log:
         enable_filename = ('{}{}_heranca.log').format(output_path, file_stem)
+        print('Log file saved to: ', enable_filename)
         enable_file = open(enable_filename, 'w')
         
         values = list(log_dict.keys())
@@ -324,6 +329,7 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
         for value in values:
             outline = ('{}\t{}\n').format(value, log_dict[value])
             enable_file.write(outline)
+            print(outline)
             
         enable_file.close()
                     
