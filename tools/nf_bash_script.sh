@@ -1,0 +1,15 @@
+nextflow -C DGY1657_A_40_nextflow.config run main.nf
+nextflow -C DGY1726_61_nextflow.config run main.nf
+nextflow -C DGY1728_50_nextflow.config run main.nf
+nextflow -C DGY1731_76_nextflow.config run main.nf
+nextflow -C DGY1733_56_nextflow.config run main.nf
+nextflow -C DGY1734_79_nextflow.config run main.nf
+nextflow -C DGY1735_59_nextflow.config run main.nf
+nextflow -C DGY1736_82_nextflow.config run main.nf
+nextflow -C DGY1740_52_nextflow.config run main.nf
+nextflow -C DGY1741_77_nextflow.config run main.nf
+nextflow -C DGY1743_80_nextflow.config run main.nf
+nextflow -C DGY1744_83_nextflow.config run main.nf
+nextflow -C DGY1747_49_nextflow.config run main.nf
+nextflow -C DGY1748_74_nextflow.config run main.nf
+nextflow -C DGY1751_78_nextflow.config run main.nf
