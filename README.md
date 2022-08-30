@@ -14,7 +14,7 @@ A small script for reducing false positive variant calls using lineage informati
   Heranca requires the pairwise2 package from biopython.
   
 ### Note for NYU Greene HPC users. 
-  A modified main.nf file (and example config file) of Mohammed Khalfan's GATK4 nextflow script ([original here](https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/)) have been added to the demo folder. These have been modified for use on haploid yeast strains with two important changes: 
+  A modified main.nf file (and example config file) of Mohammed Khalfan's GATK4 nextflow script ([original here](https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/)) have been added to the ```tools``` directory. These have been modified for use on haploid yeast strains with two important changes: 
 * gatk HaplotypeCaller --sample-ploidy 1
 * gatk VariantFiltration -filter-name "MQ_filter" -filter "MQ < 30.0"
   
@@ -49,8 +49,13 @@ S6	demo/S6.vcf	Anc, S5
   ```
   Export Annotation - If a VCF file has been previously annotated these annotations can be exported in a summary file ending with '_heranca.anno.tab'
   ```
-  '-anno', '--export_annotation', type=bool, default = False)
-  ```  
+  '-anno', '--export_annotation', type=bool, default = False
+  ```
+  
+  Verbose - In addition to outputting the filter reasons additional information, such as the number of nucleotides or sizes, will also be reported
+  ```
+  '-v', '--verbose', type=bool, default = False
+  ```
   Output 
   ```
   '-o',"--output_path"
@@ -85,6 +90,7 @@ S6	demo/S6.vcf	Anc, S5
   ```
   '-pct', '--pct_align', type=float, default = 0.8)
   ```
+ 
 ### Output:
 
 Output will be a modified VCF file inluding all variants present in the original, but with those candidates that failed the polynucelotide or ISA criteria flagged as described above. 
