@@ -28,6 +28,10 @@ ver 0.6 - public (journal lease)
         _x_ new dependency: pip install biopython
     
     0.6.1 _x_ added UI text
+    0.6.2 _x_ reset output
+    0.6.3 _x_ added 'verbose'
+    0.6.4 _x_ added 'remove_filtered'
+    
 
 @author: pspealman
 
@@ -57,8 +61,8 @@ parser.add_argument('-fa', '--fasta_file', nargs='?', type=str,
                     default = 'demo/s288c_chr3.fa')
                     #default = 'C:/Gresham/genomes/Ensembl/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa')
 
-parser.add_argument('-o',"--output_path", 
-                    default = 'demo/heranca_')
+parser.add_argument('-o',"--output_path") 
+                    #default = 'demo/heranca_')
                     #default = 'C:\\Gresham\\Project_Carolino_new\\vcf\\heranca\\heranca_')
 
 
@@ -71,6 +75,8 @@ parser.add_argument('-p', '--max_polynucleotide', nargs='?', type=int, default =
 parser.add_argument('-m', '--max_isa', nargs='?', type=int, default = 3)
 parser.add_argument('-pct', '--pct_align', type=float, default = 0.8)
 parser.add_argument('-f', '--flank', type=int, default = 7)
+parser.add_argument('-v', '--verbose', type=bool, default = False)
+parser.add_argument('-r', '--remove_filtered', type=bool, default = True)
 
 args = parser.parse_args()
 
@@ -218,7 +224,11 @@ def eval_minimum_relative_likelihood(values):
         mrl = (gl * ga) / max((dp - ga + 1),1)
         
         if mrl < 100:
-            outline = ('QH_filter_low_genotype_relative_likelihood_{}').format(mrl)
+            if args.verbose:
+                outline = ('QH_low_genotype_relative_likelihood_{}').format(mrl)
+            else:
+                outline = ('QH_low_genotype_relative_likelihood')
+                
             return(outline)
     
     return('PASS')
@@ -272,7 +282,10 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
                 strain_ct = get_strain_count(strain, variant, metadata_dict)
                             
                 if strain_ct >= args.max_isa:
-                    filter_value = ("QH_fails_ISA_{}").format(strain_ct)
+                    if args.verbose:
+                        filter_value = ("QH_fails_ISA{}").format(strain_ct)
+                    else:
+                        filter_value = ("QH_fails_ISA")
                 
                 if filter_value == "PASS":
                     filter_value = eval_snp(chromo, start, alt)
@@ -293,7 +306,12 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
             log_dict[filter_value] += 1
                                     
             line_new = original_line.replace("PASS", filter_value)
-            edited_file.write(line_new)
+            
+            if args.remove_filtered:
+                if filter_value == 'PASS':
+                    edited_file.write(line_new)
+            else:
+                edited_file.write(line_new)
             
             if args.export_annotation:
                 if 'ANN=' in line.split('\t')[7].upper():
@@ -329,7 +347,7 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
         for value in values:
             outline = ('{}\t{}\n').format(value, log_dict[value])
             enable_file.write(outline)
-            print(outline)
+            print(outline.strip())
             
         enable_file.close()
                     
@@ -355,7 +373,10 @@ def eval_poly(chromo, start):
     post_ct, _base = count_max_poly(post_seq)
     
     if pre_ct >= args.max_polynucleotide or post_ct >= args.max_polynucleotide:
-        result = ("QH_Filter_exceeds_polyn_{}").format(max(pre_ct,post_ct))
+        if args.verbose:
+            result = ("QH_exceeds_polyn_{}").format(max(pre_ct,post_ct))
+        else:
+            result = ("QH_exceeds_polyn")
         
     return(result)
 
@@ -452,7 +473,10 @@ def eval_indel(strain, chromo, start, cutoff, alt, ref):
     result = "PASS"
     if not registered_in_anc:
         if len(strain_set) >= args.max_isa:
-            result = ("QH_indel_fails_ISA_{}").format(len(strain_set))
+            if args.verbose:
+                result = ("QH_indel_fails_ISA_{}").format(len(strain_set))
+            else:
+                result = ("QH_indel_fails_ISA")
 
     return(result)
 
@@ -476,12 +500,20 @@ def poly_run(seq, alt, runmode):
                         
         if (ct >= 8):
             if (hit/ct) >= 0.8:
-                result = ('QH_low_complexity_region_{}').format(hit)
+                if args.verbose:
+                    result = ('QH_low_complexity_region_{}').format(hit)
+                else:
+                    result = ('QH_low_complexity_region')
+                    
                 return(result)
             
         if (ct > 4):
             if search_string in field:
-                result = ('QH_forms_polyN_{}').format(len(search_string))
+                if args.verbose:
+                    result = ('QH_forms_polyN_{}').format(len(search_string))
+                else:
+                    result = ('QH_forms_polyN')
+                    
                 return(result)
          
 def eval_snp(chromo, start, alt):    
