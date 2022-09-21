@@ -1,6 +1,6 @@
 # heranca
 A small script for reducing false positive variant calls using lineage information. 
-(v0.6)
+(v0.7)
 
 ### Overview
   False positive variant calls can add extra labor to the task of making sense of a genotype. This tool uses lineage information supplied from the user to identify instances where a variant breaks from the infinite site assumption (ISA) and is more likely a false positive than a real variant. By defualt this is if it occurs in three or more unrelated strains.
@@ -59,13 +59,24 @@ S6	demo/S6.vcf	Anc, S5
   
   Remove filtered variants - When set to True (default) variants that are filtered by any process will not be written out to the edited VCF.
   ```
-  '-r', '--remove_filtered', type=bool, default = True
+  '-filter', '--remove_filtered', type=bool, default = True
+  ``` 
+  
+  Label Inherited - When set to True (default) variants that are inherited from an ancestor will be labelled as INHERITED. NB: If also used with *'--remove_filtered'* this will result in the inherited variants being filtered.
   ```
+  '-label', '--label_inherited', type=bool, default = True
+  ``` 
   
   Output 
   ```
   '-o',"--output_path"
   default = current working directory
+  ```
+  
+  Rename output - When set to True (not default) the Name in the *Name* column of the metadata file will replace the file stem in the file output name   
+  ```
+  '-rename',"--rename"
+  default = False
   ```
   
   #### Parameters
