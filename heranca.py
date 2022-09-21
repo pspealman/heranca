@@ -6,31 +6,9 @@ heranca / herança - inheritance
 
 - qc vcfs with both sequence and lineage considerations 
 
-ver 0.1 - beta (hide elapse)
-ver 0.2 - beta (printer ambiguous)
-ver 0.3 - public (closed suspicion)
-    _x_ enable non-"PASS" variants to propagate to the final file
-    _x_ enabled lineage counting
-    
-ver 0.4 - public (abstract owl)
-    _x_ added indel handling
-    
-ver 0.5 - public (statement sequence)
-    _x_ added demo files
-    _x_ corrected output
-    _x_ fasta file format handling
-    _x_ fix file output
-    
-ver 0.6 - public (journal lease)
-    _x_ added eval_minimum_relative_likelihood
-    _x_ window handling for near calls
-        _x_ including pairwise2 from biopython
-        _x_ new dependency: pip install biopython
-    
-    0.6.1 _x_ added UI text
-    0.6.2 _x_ reset output
-    0.6.3 _x_ added 'verbose'
-    0.6.4 _x_ added 'remove_filtered'
+ver 0.7 - public (Cooperation Fisherman)
+    _x_ added file output rename operation  
+    _x_ add 'inherited' label
     
 
 @author: pspealman
@@ -54,17 +32,18 @@ from Bio import pairwise2
 parser = argparse.ArgumentParser()
 #io
 parser.add_argument('-i', '--input_metadata_file', nargs='?', type=str, 
-                    default = 'demo/vcf_metadata.txt')
-                    #default = 'C:/Gresham/Project_Carolino_new/combine_vcf_metadata_indels.txt')
+                    #default = 'demo/vcf_metadata.txt')
+                    default = 'C:/Gresham/Project_Carolino_new/combine_vcf_metadata_indels.txt')
                     #default = 'C:/Gresham/Project_Carolino_new/combine_vcf_metadata_snps.txt')
-parser.add_argument('-fa', '--fasta_file', nargs='?', type=str, 
-                    default = 'demo/s288c_chr3.fa')
-                    #default = 'C:/Gresham/genomes/Ensembl/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa')
 
-parser.add_argument('-o',"--output_path") 
+parser.add_argument('-fa', '--fasta_file', nargs='?', type=str, 
+                    #default = 'demo/s288c_chr3.fa')
+                    default = 'C:/Gresham/genomes/Ensembl/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa')
+
+parser.add_argument('-o',"--output_path", 
                     #default = 'demo/heranca_')
                     #default = 'C:\\Gresham\\Project_Carolino_new\\vcf\\heranca\\heranca_')
-
+                    default = 'C:/Gresham/Project_Carolino_new/supplemental/vcf/vcf_files_filtered/')
 
 #parameters
 parser.add_argument('-log', '--enable_log', type=bool, default = True)
@@ -76,7 +55,9 @@ parser.add_argument('-m', '--max_isa', nargs='?', type=int, default = 3)
 parser.add_argument('-pct', '--pct_align', type=float, default = 0.8)
 parser.add_argument('-f', '--flank', type=int, default = 7)
 parser.add_argument('-v', '--verbose', type=bool, default = False)
-parser.add_argument('-r', '--remove_filtered', type=bool, default = True)
+parser.add_argument('-rename', '--rename', type=bool, default = True)
+parser.add_argument('-filter', '--remove_filtered', type=bool, default = True)
+parser.add_argument('-inherit', '--label_inherited', type=bool, default = True)
 
 args = parser.parse_args()
 
@@ -186,15 +167,14 @@ def first_pass_vcf(strain, filename):
     
 def get_strain_count(strain, variant, metadata_dict):
     global strain_variant_catalog
-    strain_ct = set()   
+    strain_ct = set()
     
     strain_ancestor_set = metadata_dict[strain]['ancestor_set']
-        
     
     if strain not in strain_ancestor_set: 
         for anc_strain in strain_ancestor_set:
             if variant in strain_variant_catalog[anc_strain]:
-                return(0)
+                return(True, 0)
         
         for other_strain in strain_variant_catalog:
             if other_strain != strain:
@@ -202,7 +182,7 @@ def get_strain_count(strain, variant, metadata_dict):
                     if variant in strain_variant_catalog[other_strain]:
                         strain_ct.add(other_strain)
                         
-    return(len(strain_ct))
+    return(False, len(strain_ct))
 
 def eval_minimum_relative_likelihood(values):
     '''
@@ -244,8 +224,12 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
     
     file_stem = pathlib.Path(filename).stem
         
+    if args.rename:
+        file_stem = strain
+
     edited_filename = ('{}{}_heranca.vcf').format(output_path, file_stem)
     edited_file = open(edited_filename, 'w')
+
     print('Edited vcf file saved to: ', edited_filename)
     
     if args.export_annotation:
@@ -279,13 +263,18 @@ def parse_vcf(strain, filename, outfile_uid, metadata_dict):
                 chromo = chromo, start = start, ref = ref, alt = alt)
             
             if var_type == 'snp':
-                strain_ct = get_strain_count(strain, variant, metadata_dict)
-                            
-                if strain_ct >= args.max_isa:
-                    if args.verbose:
-                        filter_value = ("QH_fails_ISA{}").format(strain_ct)
-                    else:
-                        filter_value = ("QH_fails_ISA")
+                inherited, strain_ct = get_strain_count(strain, variant, metadata_dict)
+                
+                if args.label_inherited:
+                    if inherited:
+                        filter_value = 'INHERITED'
+                
+                if not inherited:
+                    if strain_ct >= args.max_isa:
+                        if args.verbose:
+                            filter_value = ("QH_fails_ISA{}").format(strain_ct)
+                        else:
+                            filter_value = ("QH_fails_ISA")
                 
                 if filter_value == "PASS":
                     filter_value = eval_snp(chromo, start, alt)
@@ -471,6 +460,10 @@ def eval_indel(strain, chromo, start, cutoff, alt, ref):
                                                     strain_set.add(other_strain)
 
     result = "PASS"
+    if args.label_inherited:
+        if registered_in_anc:
+            result = 'INHERITED'
+        
     if not registered_in_anc:
         if len(strain_set) >= args.max_isa:
             if args.verbose:
@@ -510,9 +503,9 @@ def poly_run(seq, alt, runmode):
         if (ct > 4):
             if search_string in field:
                 if args.verbose:
-                    result = ('QH_forms_polyN_{}').format(len(search_string))
+                    result = ('QH_exceeds_polyN_{}').format(len(search_string))
                 else:
-                    result = ('QH_forms_polyN')
+                    result = ('QH_exceeds_polyN')
                     
                 return(result)
          
