@@ -29,35 +29,36 @@ import pathlib
 import argparse
 from Bio import pairwise2
 
+
 parser = argparse.ArgumentParser()
 #io
-parser.add_argument('-i', '--input_metadata_file', nargs='?', type=str, 
-                    #default = 'demo/vcf_metadata.txt')
-                    default = 'C:/Gresham/Project_Carolino_new/combine_vcf_metadata_indels.txt')
+parser.add_argument('-i', '--input_metadata_file', nargs='?', type=str,
+                    default = 'demo/vcf_metadata.txt')
+                    #default = 'C:/Gresham/Project_Carolino_new/combine_vcf_metadata_indels.txt')
                     #default = 'C:/Gresham/Project_Carolino_new/combine_vcf_metadata_snps.txt')
 
-parser.add_argument('-fa', '--fasta_file', nargs='?', type=str, 
-                    #default = 'demo/s288c_chr3.fa')
-                    default = 'C:/Gresham/genomes/Ensembl/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa')
+parser.add_argument('-fa', '--fasta_file', nargs='?', type=str,
+                    default = 'demo/s288c_chr3.fa')
+                    #default = 'C:/Gresham/genomes/Ensembl/Saccharomyces_cerevisiae.R64-1-1.dna.toplevel.fa')
 
-parser.add_argument('-o',"--output_path", 
-                    #default = 'demo/heranca_')
+parser.add_argument('-o',"--output_path",
+                    default = 'demo/heranca_')
                     #default = 'C:\\Gresham\\Project_Carolino_new\\vcf\\heranca\\heranca_')
-                    default = 'C:/Gresham/Project_Carolino_new/supplemental/vcf/vcf_files_filtered/')
+                    #default = 'C:/Gresham/Project_Carolino_new/supplemental/vcf/vcf_files_filtered/')
 
 #parameters
-parser.add_argument('-log', '--enable_log', type=bool, default = True)
-parser.add_argument('-anno', '--export_annotation', type=bool, default = False)
-parser.add_argument('-no_indel', '--no_evaluate_indel', type=bool, default = False)
+parser.add_argument('-log', '--enable_log', action='store_false')
+parser.add_argument('-anno', '--export_annotation', action='store_true')
+parser.add_argument('-no_indel', '--no_evaluate_indel', action='store_true')
 parser.add_argument('-w', '--window', nargs='?', type=int, default = 7)
 parser.add_argument('-p', '--max_polynucleotide', nargs='?', type=int, default = 5)
 parser.add_argument('-m', '--max_isa', nargs='?', type=int, default = 3)
 parser.add_argument('-pct', '--pct_align', type=float, default = 0.8)
 parser.add_argument('-f', '--flank', type=int, default = 7)
-parser.add_argument('-v', '--verbose', type=bool, default = False)
-parser.add_argument('-rename', '--rename', type=bool, default = True)
-parser.add_argument('-filter', '--remove_filtered', type=bool, default = True)
-parser.add_argument('-inherit', '--label_inherited', type=bool, default = True)
+parser.add_argument('-v', '--verbose', action='store_true')
+parser.add_argument('-rename', '--rename', action='store_false')
+parser.add_argument('-filter', '--remove_filtered', action='store_false')
+parser.add_argument('-inherit', '--label_inherited', action='store_false')
 
 args = parser.parse_args()
 
