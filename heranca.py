@@ -9,6 +9,8 @@ heranca / herança - inheritance
 ver 0.7 - public (Cooperation Fisherman)
     _x_ added file output rename operation  
     _x_ add 'inherited' label
+ver 0.8 - public (dispelvels)
+    _x_ added logic filters for output
     
 
 @author: pspealman
